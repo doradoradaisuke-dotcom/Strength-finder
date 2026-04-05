@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ストレングス診断｜34の強みテーマで自分を知る</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --st:#5B5EA6;--st-l:#9B9ED6;
+  --ex:#E76F51;--ex-l:#F4A48E;
+  --in:#E9C46A;--in-l:#F5D9A0;
+  --rb:#52B788;--rb-l:#8ED4B0;
+  --bg:#F7F7FC;--card:#fff;--text:#1E1E2E;--sub:#6B6B80;
+  --border:#E5E4F0;--shadow:0 4px 24px rgba(30,30,60,.09);
+  --shadow-lg:0 8px 40px rgba(30,30,60,.15);
+}
+body{font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans','Yu Gothic','Meiryo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+
+/* HEADER */
+header{width:100%;background:linear-gradient(135deg,#2D2E6B 0%,#5B5EA6 100%);color:#fff;text-align:center;padding:26px 20px 22px;box-shadow:0 2px 16px rgba(45,46,107,.3)}
+header h1{font-size:1.45rem;font-weight:800;letter-spacing:.06em}
+header p{font-size:.82rem;opacity:.75;margin-top:5px}
+
+.wrap{width:100%;max-width:760px;padding:32px 20px 64px}
+.screen{display:none}.screen.active{display:block}
+
+/* INTRO */
+.intro-hero{background:var(--card);border-radius:24px;padding:44px 40px;box-shadow:var(--shadow-lg);text-align:center}
+.intro-hero .big-icon{font-size:3.8rem;display:block;margin-bottom:16px}
+.intro-hero h2{font-size:1.7rem;font-weight:800;color:#2D2E6B;margin-bottom:12px}
+.intro-hero p{color:var(--sub);line-height:1.85;font-size:.95rem;margin-bottom:8px}
+.domains{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:28px 0}
+.domain-chip{border-radius:14px;padding:14px 16px;text-align:left}
+.domain-chip .d-label{font-size:.72rem;font-weight:700;opacity:.7;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+.domain-chip .d-name{font-size:.92rem;font-weight:800}
+.domain-chip .d-count{font-size:.72rem;margin-top:2px;opacity:.65}
+.d-st{background:rgba(91,94,166,.1);color:var(--st)}
+.d-ex{background:rgba(231,111,81,.1);color:var(--ex)}
+.d-in{background:rgba(233,196,106,.15);color:#b8870a}
+.d-rb{background:rgba(82,183,136,.1);color:#2a7a56}
+.meta-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0 32px}
+.meta-box{background:var(--bg);border-radius:12px;padding:14px 12px;text-align:center}
+.meta-box .m-val{font-size:1.4rem;font-weight:800;color:var(--st)}
+.meta-box .m-lab{font-size:.72rem;color:var(--sub);margin-top:2px}
+
+/* BUTTONS */
+.btn{display:inline-block;padding:14px 36px;border-radius:100px;font-size:1rem;font-weight:700;cursor:pointer;border:none;transition:all .2s ease;letter-spacing:.03em}
+.btn-primary{background:linear-gradient(135deg,#5B5EA6,#2D2E6B);color:#fff;box-shadow:0 4px 18px rgba(91,94,166,.38)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(91,94,166,.48)}
+.btn-outline{background:transparent;border:2px solid var(--st);color:var(--st);padding:12px 30px}
+.btn-outline:hover{background:var(--st);color:#fff}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:24px}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-label{font-size:.78rem;color:var(--sub);font-weight:600}
+.prog-num{font-size:.78rem;font-weight:800;color:var(--st)}
+.prog-bg{background:var(--border);border-radius:100px;height:7px;overflow:hidden}
+.prog-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--st),#9B9ED6);transition:width .4s ease}
+
+/* TIMER */
+.timer-wrap{display:flex;justify-content:flex-end;margin-bottom:12px}
+.timer-ring{position:relative;width:48px;height:48px}
+.timer-ring svg{transform:rotate(-90deg)}
+.timer-ring .ring-bg{fill:none;stroke:var(--border);stroke-width:3}
+.timer-ring .ring-fill{fill:none;stroke:var(--st);stroke-width:3;stroke-linecap:round;stroke-dasharray:125.66;transition:stroke-dashoffset .9s linear, stroke .5s}
+.timer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:800;color:var(--st)}
+
+/* QUESTION CARD */
+.q-card{background:var(--card);border-radius:20px;padding:36px;box-shadow:var(--shadow);margin-bottom:20px;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.q-inst{font-size:.78rem;color:var(--sub);font-weight:600;margin-bottom:20px;text-align:center;letter-spacing:.02em}
+
+.choice-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
+.choice-btn{border:2px solid var(--border);border-radius:16px;padding:20px 18px;background:#fff;cursor:pointer;text-align:left;transition:all .2s ease;position:relative;display:flex;flex-direction:column;gap:8px}
+.choice-btn:hover{border-color:var(--st);background:rgba(91,94,166,.04);transform:translateY(-2px);box-shadow:0 4px 16px rgba(91,94,166,.12)}
+.choice-btn.selected{border-color:var(--st);background:rgba(91,94,166,.07);box-shadow:0 4px 16px rgba(91,94,166,.18)}
+.choice-btn.selected::before{content:'✓';position:absolute;top:12px;right:14px;font-size:.9rem;font-weight:800;color:var(--st)}
+.choice-letter{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:var(--bg);font-size:.78rem;font-weight:800;color:var(--sub);flex-shrink:0}
+.choice-btn.selected .choice-letter{background:var(--st);color:#fff}
+.choice-text{font-size:.9rem;line-height:1.7;color:var(--text);font-weight:500}
+.choice-theme{font-size:.68rem;color:var(--sub);margin-top:4px}
+
+/* NAV */
+.nav-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.btn-nav{padding:12px 28px;border-radius:100px;font-size:.88rem;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+.btn-prev-nav{background:var(--border);color:var(--sub)}
+.btn-prev-nav:hover{background:#d5d4e0}
+.btn-next-nav{background:linear-gradient(135deg,var(--st),#2D2E6B);color:#fff;box-shadow:0 4px 14px rgba(91,94,166,.3)}
+.btn-next-nav:hover:not(:disabled){transform:translateY(-1px)}
+.btn-next-nav:disabled{opacity:.38;cursor:not-allowed;transform:none}
+.btn-finish-nav{background:linear-gradient(135deg,#52B788,#2a7a56);color:#fff;box-shadow:0 4px 14px rgba(82,183,136,.3)}
+
+/* RESULTS */
+.res-hero{text-align:center;margin-bottom:32px}
+.res-hero h2{font-size:1.75rem;font-weight:800;color:#2D2E6B;margin-bottom:10px}
+.res-hero p{color:var(--sub);font-size:.93rem;line-height:1.8}
+
+.section-title{font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* Domain summary */
+.domain-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
+.dom-card{border-radius:16px;padding:20px;color:#fff}
+.dom-card h4{font-size:.78rem;font-weight:700;opacity:.8;margin-bottom:4px}
+.dom-card .dom-score{font-size:2rem;font-weight:900;line-height:1}
+.dom-card .dom-bar-bg{background:rgba(255,255,255,.25);border-radius:100px;height:5px;margin-top:10px}
+.dom-card .dom-bar-fill{height:100%;border-radius:100px;background:rgba(255,255,255,.7)}
+.dom-card .dom-themes{font-size:.7rem;opacity:.7;margin-top:6px}
+.dom-st{background:linear-gradient(135deg,var(--st),#2D2E6B)}
+.dom-ex{background:linear-gradient(135deg,var(--ex),#c04a2a)}
+.dom-in{background:linear-gradient(135deg,#E9C46A,#b8870a)}
+.dom-rb{background:linear-gradient(135deg,var(--rb),#2a7a56)}
+
+/* Chart */
+.chart-card{background:var(--card);border-radius:20px;padding:28px;box-shadow:var(--shadow);margin-bottom:28px;text-align:center}
+.chart-wrap{max-width:400px;margin:0 auto}
+
+/* Top 5 */
+.top-card{background:var(--card);border-radius:18px;padding:24px;box-shadow:var(--shadow);margin-bottom:14px;border-left:4px solid var(--st);animation:fadeUp .4s ease both}
+.top-card:nth-child(2){animation-delay:.05s}
+.top-card:nth-child(3){animation-delay:.1s}
+.top-card:nth-child(4){animation-delay:.15s}
+.top-card:nth-child(5){animation-delay:.2s}
+.top-card-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.rank-badge{min-width:48px;text-align:center}
+.rank-num{font-size:2rem;font-weight:900;line-height:1}
+.rank-tag{font-size:.62rem;font-weight:700;color:var(--sub)}
+.top-info{flex:1}
+.top-name-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.top-icon{font-size:1.3rem}
+.top-name{font-size:1.05rem;font-weight:800}
+.top-domain-chip{font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:100px}
+.top-score-bar-bg{background:var(--bg);height:5px;border-radius:100px;overflow:hidden;margin-bottom:10px}
+.top-score-bar-fill{height:100%;border-radius:100px}
+.top-desc{font-size:.85rem;color:var(--sub);line-height:1.8;margin-bottom:12px}
+.top-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.top-detail-box{background:var(--bg);border-radius:10px;padding:12px}
+.top-detail-box h5{font-size:.7rem;font-weight:700;color:var(--sub);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.top-detail-box p{font-size:.78rem;color:var(--text);line-height:1.65}
+.kw-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.kw{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:100px;background:rgba(91,94,166,.09);color:var(--st)}
+
+/* All scores */
+.all-card{background:var(--card);border-radius:18px;padding:24px;box-shadow:var(--shadow);margin-bottom:28px}
+.score-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.score-icon{font-size:1rem;width:22px;text-align:center;flex-shrink:0}
+.score-name{font-size:.8rem;font-weight:600;width:80px;flex-shrink:0}
+.score-bar-bg{flex:1;height:7px;background:var(--bg);border-radius:100px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:100px}
+.score-val{font-size:.75rem;font-weight:800;min-width:30px;text-align:right;color:var(--st)}
+.domain-label{font-size:.72rem;font-weight:700;color:var(--sub);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.06em;padding-left:2px}
+
+.restart-wrap{text-align:center;margin-top:12px}
+/* EXPORT */
+.export-bar{background:var(--card);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow);margin-bottom:20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center}
+.export-bar .exp-title{font-size:.82rem;font-weight:700;color:var(--sub);width:100%;text-align:center;margin-bottom:2px}
+.btn-exp{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:100px;font-size:.88rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;letter-spacing:.02em}
+.btn-img{background:linear-gradient(135deg,#6C63FF,#3F3AAE);color:#fff;box-shadow:0 4px 14px rgba(108,99,255,.3)}
+.btn-img:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(108,99,255,.4)}
+.btn-exp:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.exp-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1E1E2E;color:#fff;padding:12px 24px;border-radius:100px;font-size:.85rem;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.exp-toast.show{opacity:1}
+
+/* Timer urgent */
+.timer-urgent .ring-fill{stroke:#E76F51}
+.timer-urgent .timer-num{color:#E76F51}
+
+@media(max-width:600px){
+  .intro-hero{padding:30px 20px}
+  .intro-hero h2{font-size:1.4rem}
+  .domains{grid-template-columns:1fr}
+  .choice-wrap{grid-template-columns:1fr}
+  .top-detail-grid{grid-template-columns:1fr}
+  .domain-cards{grid-template-columns:1fr}
+  .q-card{padding:24px 18px}
+  .meta-row{grid-template-columns:1fr 1fr 1fr}
+}
+footer{text-align:center;padding:20px;font-size:.72rem;color:var(--sub)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>✨ ストレングス診断</h1>
+  <p>34の強みテーマで、あなたの才能を発見する</p>
+</header>
+
+<div class="wrap">
+
+<!-- INTRO -->
+<div id="sc-intro" class="screen active">
+  <div class="intro-hero">
+    <span class="big-icon">🔮</span>
+    <h2>あなたの強みを科学的に診断</h2>
+    <p>Gallupのクリフトンストレングスに着想を得た<strong>34の強みテーマ</strong>で、あなたの本質的な才能を明らかにします。</p>
+    <p>2択の質問に<strong>直感で</strong>答えてください。考えすぎず、「今の自分」に近い方を選ぶのがコツです。</p>
+
+    <div class="domains">
+      <div class="domain-chip d-st"><div class="d-label">Domain 1</div><div class="d-name">🔷 戦略的思考力</div><div class="d-count">8テーマ</div></div>
+      <div class="domain-chip d-ex"><div class="d-label">Domain 2</div><div class="d-name">🔶 実行力</div><div class="d-count">9テーマ</div></div>
+      <div class="domain-chip d-in"><div class="d-label">Domain 3</div><div class="d-name">🟡 影響力</div><div class="d-count">8テーマ</div></div>
+      <div class="domain-chip d-rb"><div class="d-label">Domain 4</div><div class="d-name">🟢 人間関係構築力</div><div class="d-count">9テーマ</div></div>
+    </div>
+
+    <div class="meta-row">
+      <div class="meta-box"><div class="m-val">34</div><div class="m-lab">強みテーマ</div></div>
+      <div class="meta-box"><div class="m-val">85</div><div class="m-lab">問（2択形式）</div></div>
+      <div class="meta-box"><div class="m-val">~10分</div><div class="m-lab">所要時間</div></div>
+    </div>
+
+    <button class="btn btn-primary" onclick="startQuiz()">診断スタート →</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="sc-quiz" class="screen">
+  <div class="prog-wrap">
+    <div class="prog-top">
+      <span class="prog-label">進捗</span>
+      <span class="prog-num" id="prog-num">1 / 51</span>
+    </div>
+    <div class="prog-bg"><div class="prog-fill" id="prog-fill" style="width:2%"></div></div>
+  </div>
+
+  <div class="timer-wrap">
+    <div class="timer-ring" id="timer-ring">
+      <svg width="48" height="48" viewBox="0 0 48 48">
+        <circle class="ring-bg" cx="24" cy="24" r="20"/>
+        <circle class="ring-fill" id="ring-fill" cx="24" cy="24" r="20"/>
+      </svg>
+      <div class="timer-num" id="timer-num">20</div>
+    </div>
+  </div>
+
+  <div class="q-card" id="q-card">
+    <div class="q-inst">次の2つのうち、より自分に近いと感じる方を選んでください</div>
+    <div class="choice-wrap">
+      <button class="choice-btn" id="btn-a" onclick="select('A')">
+        <span class="choice-letter">A</span>
+        <span class="choice-text" id="text-a">—</span>
+        <span class="choice-theme" id="theme-a"></span>
+      </button>
+      <button class="choice-btn" id="btn-b" onclick="select('B')">
+        <span class="choice-letter">B</span>
+        <span class="choice-text" id="text-b">—</span>
+        <span class="choice-theme" id="theme-b"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-nav btn-prev-nav" id="btn-prev" onclick="prevQ()">← 前へ</button>
+    <button class="btn-nav btn-next-nav" id="btn-next" onclick="nextQ()" disabled>次へ →</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="sc-results" class="screen">
+  <div class="res-hero">
+    <h2>🌟 あなたの強みが見えてきました</h2>
+    <p>85問の回答をもとに、34の強みテーマを分析しました。<br>上位の強みを意識して、日々の仕事・生活に活かしましょう。</p>
+  </div>
+
+  <div class="section-title">🗂 4つのドメイン別スコア</div>
+  <div class="domain-cards" id="domain-cards"></div>
+
+  <div class="chart-card">
+    <div class="section-title" style="justify-content:center">📊 34テーマ バランスチャート</div>
+    <div class="chart-wrap"><canvas id="radar-chart"></canvas></div>
+  </div>
+
+  <div class="section-title">🏆 あなたのトップ5強み</div>
+  <div id="top5"></div>
+
+  <div class="all-card">
+    <div class="section-title">📋 全34テーマ スコア一覧</div>
+    <div id="all-scores"></div>
+  </div>
+
+  <div class="export-bar">
+    <div class="exp-title">📤 結果を保存・シェアする</div>
+    <button class="btn-exp btn-img" id="btn-copy-img" onclick="exportImage()">
+      🖼 画像としてコピー
+    </button>
+    <button class="btn-exp btn-img" id="btn-dl-img" onclick="downloadImage()">
+      ⬇ 画像をダウンロード
+    </button>
+  </div>
+
+  <div class="restart-wrap">
+    <button class="btn btn-outline" onclick="restart()">↩ もう一度診断する</button>
+  </div>
+</div>
+</div>
+
+<div class="exp-toast" id="exp-toast"></div>
+<footer>このツールはGallup社・CliftonStrengths®とは無関係のオリジナル診断です</footer>
+
+<script>
+// ===================== DATA =====================
+
+const DOMAINS = [
+  { id:'ST', name:'戦略的思考力', en:'Strategic Thinking', color:'#5B5EA6', icon:'🔷' },
+  { id:'EX', name:'実行力',       en:'Executing',          color:'#E76F51', icon:'🔶' },
+  { id:'IN', name:'影響力',       en:'Influencing',        color:'#b8870a', icon:'🟡' },
+  { id:'RB', name:'人間関係構築力', en:'Relationship Building', color:'#2a7a56', icon:'🟢' },
+];
+
+const THEMES = [
+  // ── 戦略的思考力 ──
+  { id:0,  dom:'ST', name:'戦略性',     icon:'🎯', color:'#5B5EA6',
+    desc:'複雑な状況の中から最善の道筋を瞬時に見つけ出す力。パターン認識と先読みで、最も効果的なルートを選べる。',
+    apply:'「選択肢の整理」「意思決定の場でのファシリテーション」「長期計画の立案」に力を発揮する。',
+    watch:'手段の選定に集中するあまり、実行フェーズの細部を見落とすことがある。',
+    kw:['先見性','問題解決','選択力','洞察力'] },
+  { id:1,  dom:'ST', name:'分析思考',   icon:'🔬', color:'#5B5EA6',
+    desc:'データと論理に基づいて物事を分解し、根拠を持って結論を導く力。感情より事実を重視する。',
+    apply:'「データ分析」「意見の根拠チェック」「複雑な問題の原因特定」で本領を発揮する。',
+    watch:'完全なデータを求めるあまり、決断が遅れることがある。「十分なデータ」の基準を意識しよう。',
+    kw:['論理思考','データ重視','客観性','精緻さ'] },
+  { id:2,  dom:'ST', name:'未来志向',   icon:'🔭', color:'#5B5EA6',
+    desc:'まだ存在しない未来を鮮明にイメージし、そのビジョンで周囲を鼓舞する力。可能性への期待がエネルギー源。',
+    apply:'「ビジョンの言語化」「チームの方向性設定」「長期戦略のインスピレーション提供」に最適。',
+    watch:'現在より未来に意識が向くため、足元の実行計画が手薄になることがある。',
+    kw:['ビジョン','可能性','インスピレーション','長期思考'] },
+  { id:3,  dom:'ST', name:'着想',       icon:'💡', color:'#5B5EA6',
+    desc:'一見無関係なものをつなげ、革新的なアイデアを生み出す力。「もし〜だったら？」思考を楽しむ。',
+    apply:'「新しいアプローチの提案」「ブレスト主導」「既存プロセスの革新」に大きく貢献する。',
+    watch:'アイデアは豊富だが、実行や継続に飽きやすい。実行力ある人と組むと最強になる。',
+    kw:['創造性','発想力','革新','独創性'] },
+  { id:4,  dom:'ST', name:'収集心',     icon:'📦', color:'#5B5EA6',
+    desc:'情報・知識・モノを収集し蓄積することに喜びを感じる力。「知っていること」が自信の源泉。',
+    apply:'「リサーチ」「情報整理」「専門知識の蓄積と共有」で周囲の頼れる情報源になれる。',
+    watch:'情報収集自体が目的化することがある。「何のために集めるか」を常に意識しよう。',
+    kw:['好奇心','情報収集','知識欲','リサーチ'] },
+  { id:5,  dom:'ST', name:'内省',       icon:'🧘', color:'#5B5EA6',
+    desc:'深く考え、思索する時間を大切にする力。独力で問題の本質を掘り下げ、洞察を生み出す。',
+    apply:'「文章・コンセプト作成」「複雑なテーマへの深い理解」「一人で行う精緻な思考作業」が得意。',
+    watch:'内省が過ぎると行動が遅れることも。アウトプットする場を意図的に作ろう。',
+    kw:['思索','深い思考','独立','哲学的'] },
+  { id:6,  dom:'ST', name:'学習欲',     icon:'📚', color:'#5B5EA6',
+    desc:'学ぶプロセス自体を楽しむ力。到達点より成長の過程にやりがいを感じる。',
+    apply:'「新しい分野への挑戦」「スキルアップ」「研修・勉強会の企画」で力を発揮する。',
+    watch:'学ぶことに満足して、実際に使うことを怠ることがある。学びを行動に転換する習慣を。',
+    kw:['好奇心','成長志向','知識欲','探求心'] },
+  { id:7,  dom:'ST', name:'原点思考',   icon:'🏛', color:'#5B5EA6',
+    desc:'歴史・背景・経緯を理解することで現在を深く把握する力。過去から未来への文脈を読む。',
+    apply:'「組織の変遷や背景の理解」「なぜ今こうなっているかの説明」「過去事例を活かした判断」が得意。',
+    watch:'前例を重視するあまり、急速な変化への適応が遅れることがある。',
+    kw:['歴史観','文脈理解','背景重視','伝統'] },
+
+  // ── 実行力 ──
+  { id:8,  dom:'EX', name:'実行力',     icon:'⚡', color:'#E76F51',
+    desc:'毎日何かを成し遂げずにはいられない強い内的ドライブ。タスク完遂への飽くなき欲求。',
+    apply:'「高負荷プロジェクト」「マルチタスク環境」「継続的な成果が求められる仕事」で輝く。',
+    watch:'常に働き続けようとするあまり、燃え尽きるリスクがある。意図的な休息も成果の一部。',
+    kw:['達成感','勤勉','完遂力','生産性'] },
+  { id:9,  dom:'EX', name:'調整力',     icon:'🔧', color:'#E76F51',
+    desc:'複数の人・タスク・リソースを最適に組み合わせる力。複雑な状況でも最善の配置を見つける。',
+    apply:'「プロジェクト管理」「チーム配置の最適化」「複数業務の同時推進」に本領を発揮する。',
+    watch:'柔軟に調整しすぎて、軸がブレて見えることも。優先事項を明示しておくとよい。',
+    kw:['段取り','調整力','柔軟性','最適化'] },
+  { id:10, dom:'EX', name:'信念',       icon:'🕊', color:'#E76F51',
+    desc:'揺るぎない価値観を持ち、それに基づいて行動する力。利益より意義を優先する。',
+    apply:'「倫理的判断が求められる場面」「組織の文化形成」「価値観に基づいた発言」で存在感を示す。',
+    watch:'信念が強すぎると、異なる価値観の人と衝突することも。多様な視点への敬意を忘れずに。',
+    kw:['価値観','誠実さ','目的意識','意義'] },
+  { id:11, dom:'EX', name:'公平性',     icon:'⚖', color:'#E76F51',
+    desc:'全員に同じルールを適用し、一貫性を保つ力。特別扱いを排し、公正な環境を作る。',
+    apply:'「ルール・基準の策定」「評価制度の構築」「チームの公平な運営」に強みを発揮する。',
+    watch:'例外や個別対応が苦手なため、個人の特殊事情への配慮が不足することがある。',
+    kw:['公平性','一貫性','ルール遵守','平等'] },
+  { id:12, dom:'EX', name:'慎重さ',     icon:'🔒', color:'#E76F51',
+    desc:'リスクを丁寧に評価してから行動する力。「やらない判断」も大きな強みになる。',
+    apply:'「意思決定の品質保証」「リスク管理」「重要な契約・合意のレビュー」で活躍する。',
+    watch:'慎重さが過ぎると機会を逃すことも。「十分に検討した」と判断するラインを明確に持とう。',
+    kw:['慎重さ','リスク管理','品質重視','思慮深さ'] },
+  { id:13, dom:'EX', name:'規律性',     icon:'📐', color:'#E76F51',
+    desc:'ルーティンと秩序の中で最大のパフォーマンスを発揮する力。計画通りに進めることが心地よい。',
+    apply:'「業務プロセスの標準化」「締め切り管理」「体系的な情報整理」に強みを発揮する。',
+    watch:'予期しない変化に対してストレスを感じやすい。「変化も計画の一部」と捉える練習を。',
+    kw:['規律性','秩序','計画性','体系化'] },
+  { id:14, dom:'EX', name:'集中力',     icon:'🎯', color:'#E76F51',
+    desc:'目標に向けてブレずに集中し続ける力。優先事項を明確にして、それ以外を切り捨てられる。',
+    apply:'「重要プロジェクトの深い推進」「中長期目標の達成」「方向性の整理が必要な場面」で光る。',
+    watch:'集中しすぎると、周囲の変化や新しい機会を見落とすことがある。定期的に視野を広げよう。',
+    kw:['集中力','目標志向','優先順位','一点突破'] },
+  { id:15, dom:'EX', name:'責任感',     icon:'🤝', color:'#E76F51',
+    desc:'一度引き受けたことを最後まで全うする誠実さ。約束を守ることが自分の誠実さの証。',
+    apply:'「信頼関係の構築」「重要案件の担当」「チームの模範となる行動」で存在感を示す。',
+    watch:'責任を抱えすぎてキャパオーバーになることがある。「引き受けない判断」も責任の一つ。',
+    kw:['誠実さ','信頼性','約束遵守','倫理観'] },
+  { id:16, dom:'EX', name:'回復思考',   icon:'🛠', color:'#E76F51',
+    desc:'問題や障害を特定し修正することにやりがいを感じる力。「壊れたもの」を直すことが好き。',
+    apply:'「トラブルシューティング」「品質改善」「停滞プロジェクトの立て直し」で真価を発揮する。',
+    watch:'常に問題を探す癖が、問題のない状況でも不満を感じさせることがある。',
+    kw:['問題解決','修復','改善思考','粘り強さ'] },
+
+  // ── 影響力 ──
+  { id:17, dom:'IN', name:'活発性',     icon:'🚀', color:'#b8870a',
+    desc:'「今すぐやろう」という衝動で周囲を動かす力。行動を起こすことで物事が始まると信じる。',
+    apply:'「停滞したチームの起動役」「新プロジェクトの立ち上げ」「スピード感が求められる場面」で活躍。',
+    watch:'計画不足のまま動き出して問題が生じることも。最低限の準備の重要性も忘れずに。',
+    kw:['行動力','スピード','起動力','挑戦'] },
+  { id:18, dom:'IN', name:'統率力',     icon:'👑', color:'#b8870a',
+    desc:'明確な立場でリーダーシップを発揮し、必要なら対立もいとわない力。存在感で場を動かす。',
+    apply:'「困難な決断が必要な場面」「チームの方向転換」「強いリーダーシップが必要な危機対応」で輝く。',
+    watch:'強引に見られることがある。反対意見にも耳を傾ける姿勢が信頼を深める。',
+    kw:['リーダーシップ','決断力','存在感','指導力'] },
+  { id:19, dom:'IN', name:'コミュニケーション', icon:'🗣', color:'#b8870a',
+    desc:'考えをわかりやすく言葉にし、人の関心を引きつける力。ストーリーテリングで場を動かす。',
+    apply:'「プレゼン」「チームへの説明」「対外的なスピーチ・文章」で最大限の力を発揮する。',
+    watch:'話すことに自信があるため、聞くことが不足することがある。対話のバランスを意識しよう。',
+    kw:['説明力','ストーリー','表現力','説得力'] },
+  { id:20, dom:'IN', name:'競争性',     icon:'🏆', color:'#b8870a',
+    desc:'他者との比較と順位意識がモチベーションになる力。「勝つこと」が強い推進力になる。',
+    apply:'「営業・交渉」「競争環境での高成果」「チームに刺激を与えるチャレンジ設定」で活躍する。',
+    watch:'勝ち負けへのこだわりが、協調が必要な場面で摩擦を生むことがある。',
+    kw:['競争心','向上心','モチベーション','勝利'] },
+  { id:21, dom:'IN', name:'最上志向',   icon:'💎', color:'#b8870a',
+    desc:'平均を上回ることより、すでに優れたものをさらに卓越させることに意欲を感じる力。',
+    apply:'「強みを活かした人材配置の提案」「卓越したアウトプットの追求」「品質のこだわり」で輝く。',
+    watch:'弱点の修正より強みの強化に集中するため、必要な基礎力が不足することがある。',
+    kw:['卓越','強み活用','品質','最高志向'] },
+  { id:22, dom:'IN', name:'自己確信',   icon:'🦁', color:'#b8870a',
+    desc:'自分の判断と能力への強い信頼。周囲に流されず、自分のコンパスで動ける力。',
+    apply:'「不確実な状況での決断」「自分のスタイルを貫く仕事」「パイオニア的な役割」で強みを発揮。',
+    watch:'自信が過剰に映ることもある。自分の判断を疑う謙虚さも成長の鍵になる。',
+    kw:['自信','独立心','内発的動機','信念'] },
+  { id:23, dom:'IN', name:'重要性',     icon:'⭐', color:'#b8870a',
+    desc:'意味のある仕事をし、周囲から認められることに強い動機を感じる力。影響の大きさを求める。',
+    apply:'「大きな責任を持つポジション」「影響力の大きなプロジェクト」「認知度の高い仕事」で輝く。',
+    watch:'承認欲求が強すぎると、評価されない仕事へのモチベーションが下がることがある。',
+    kw:['存在感','インパクト','承認','使命感'] },
+  { id:24, dom:'IN', name:'社交性',     icon:'🤗', color:'#b8870a',
+    desc:'初対面でも素早く打ち解け、人の心の扉を開ける力。ネットワーキングに強い喜びを感じる。',
+    apply:'「営業・外交」「チームの雰囲気づくり」「社内外のネットワーク拡大」で最大限の力を発揮。',
+    watch:'広く浅い関係を好むため、深い信頼関係の構築に時間をかけることが苦手なことがある。',
+    kw:['社交性','ネットワーク','明るさ','人懐っこさ'] },
+
+  // ── 人間関係構築力 ──
+  { id:25, dom:'RB', name:'適応力',     icon:'🌊', color:'#2a7a56',
+    desc:'変化や予期せぬ状況に柔軟に対応する力。「今この瞬間」を大切にしながら最善を選ぶ。',
+    apply:'「変化の多い環境」「予期しない問題への対応」「臨機応変が求められる現場」で真価を発揮。',
+    watch:'流れに任せすぎると、長期的な目標設定が弱くなることがある。意識的な計画作りを。',
+    kw:['柔軟性','臨機応変','変化対応','現在集中'] },
+  { id:26, dom:'RB', name:'運命思考',   icon:'🌐', color:'#2a7a56',
+    desc:'あらゆる出来事や人はつながっているという感覚を持つ力。大きな流れの中での自分の役割を感じる。',
+    apply:'「チームの一体感醸成」「多様な背景を持つ人との橋渡し」「大局観のある意思決定」で活躍。',
+    watch:'「つながり」の感覚が強すぎると、個人の責任感が薄まることがある。',
+    kw:['つながり','意味','使命感','大局観'] },
+  { id:27, dom:'RB', name:'成長促進',   icon:'🌱', color:'#2a7a56',
+    desc:'他者の可能性を見つけ、成長を引き出すことに喜びを感じる力。人の進歩が最大の報酬。',
+    apply:'「メンタリング」「部下・後輩の育成」「人の才能を引き出すコーチング」で力を発揮する。',
+    watch:'他者の成長に集中するあまり、自分自身の成長が後回しになることがある。',
+    kw:['育成','コーチング','可能性','成長支援'] },
+  { id:28, dom:'RB', name:'共感力',     icon:'💚', color:'#2a7a56',
+    desc:'言葉にされていない他者の感情を自然と感じ取る力。人の内面を深く理解できる。',
+    apply:'「困っている人のサポート」「対人トラブルの調整」「感情的な場面での橋渡し役」で輝く。',
+    watch:'他者の感情を引き受けすぎて、精神的に消耗することがある。感情的な距離感も大切に。',
+    kw:['感受性','傾聴力','思いやり','共感'] },
+  { id:29, dom:'RB', name:'調和性',     icon:'🕊', color:'#2a7a56',
+    desc:'対立を避け、合意点を探して全員が一致できる方向を目指す力。摩擦を減らす調整役。',
+    apply:'「対立解消」「会議のファシリテーション」「多様な意見をまとめる場面」で強みを発揮。',
+    watch:'対立を避けすぎると、必要な意見の衝突まで回避してしまうことがある。',
+    kw:['和解','調整','合意形成','協調性'] },
+  { id:30, dom:'RB', name:'包括性',     icon:'🤲', color:'#2a7a56',
+    desc:'輪の外にいる人に気づき、誰も取り残さない環境を作る力。多様性への強い意識。',
+    apply:'「ダイバーシティ推進」「新メンバーの受け入れ」「誰もが発言できる場づくり」で活躍。',
+    watch:'全員を包もうとするあまり、意思決定が遅くなることがある。',
+    kw:['多様性','包摂','受容','平等意識'] },
+  { id:31, dom:'RB', name:'個別化',     icon:'🔍', color:'#2a7a56',
+    desc:'一人ひとりの独自性を見抜き、その人に最適な接し方ができる力。人の違いに強い関心を持つ。',
+    apply:'「個別最適な指導・支援」「チームメンバーの強みを活かした配置」「採用・評価」で輝く。',
+    watch:'個別対応へのこだわりが、スケーラブルな仕組みづくりと相性が悪いことがある。',
+    kw:['個別化','観察力','個性重視','多様性'] },
+  { id:32, dom:'RB', name:'ポジティブ', icon:'☀', color:'#2a7a56',
+    desc:'どんな状況でも明るい面を見つけ、周囲にエネルギーをもたらす力。楽観性が人を惹きつける。',
+    apply:'「チームの士気向上」「困難な状況での希望の提示」「雰囲気を明るくする存在」として活躍。',
+    watch:'常に明るく振る舞うことで、深刻な問題が軽視されてしまうことがある。',
+    kw:['楽観性','明るさ','エネルギー','前向き'] },
+  { id:33, dom:'RB', name:'親密性',     icon:'💛', color:'#2a7a56',
+    desc:'深く信頼し合える少数の関係に最大の価値を置く力。相手の内面まで知ることを大切にする。',
+    apply:'「深い信頼関係の構築」「長期パートナーシップの維持」「親密なチームカルチャーの形成」で輝く。',
+    watch:'深い関係を好むため、多くの人に広く影響を与えることが苦手なことがある。',
+    kw:['信頼関係','深さ','親密さ','絆'] },
+];
+
+// Statements: each theme has 3 statements
+const STMTS = [
+  ['複雑な問題に直面すると、解決への道筋が自然と頭に浮かんでくる','数多くの選択肢の中から、最も効果的な方法を直感的に選べる','会議や議論で問題の本質を素早く見極め、最善策を提示できる','状況を俯瞰して、最も重要なポイントを見極めることが得意だ','複数の情報を素早く統合し、次に何をすべきかを瞬時に判断できる'],
+  ['根拠やデータがなければ、どんな意見も簡単には信用しない','物事を細かく分解して、原因と結果の関係を明らかにしたくなる','統計や数字を見ると、自然とそのパターンや意味を読み解き始める','議論の中の矛盾や穴を、自然と見つけてしまう','データを見ると「なぜこうなっているのか」を追究せずにはいられない'],
+  ['まだ誰も見ていない未来の可能性を、鮮明にイメージできる','5年後・10年後のあるべき姿を語ることに、強いわくわく感を覚える','現在の問題より将来の大きな可能性に意識が向くことが多い','今取り組んでいることが将来どんな意味を持つか、強いビジョンがある','周囲が見えていない可能性や機会を、先取りして語ることが多い'],
+  ['一見無関係なものをつなげ、まったく新しいアイデアを生み出すのが好きだ','ブレストでは次々とアイデアが湧き、それを出し続けることに喜びを感じる','既存のやり方に疑問を持ち、全く違う発想で挑戦することが楽しい','「なぜそうしなければならないの？」と既存の前提を問い直すことが多い','異なる分野の知識を組み合わせて、新しい解決策を思いつくのが好きだ'],
+  ['興味を持った分野の情報を、できる限りたくさん集めずにはいられない','将来役立つかもしれない情報や知識を、とにかくストックしておきたい','本・記事・データなど様々な情報源から、どんどん吸収していくのが好きだ','「これはいつか使えるかも」という感覚で、情報や物を取っておきたくなる','知識の幅が広く、多様なトピックについて話せることが自分の強みだと思う'],
+  ['一人で深く考える時間が、自分にとって非常に大切だ','物事の深い意味や本質について、じっくりと思索することが好きだ','日常の出来事の背後にある本質的な意味を、考え続けることが多い','行動より先に「なぜそうするのか」を考えることが多い','複雑なテーマを一人でじっくり考えると、やがて核心に辿り着く感覚がある'],
+  ['新しいことを学ぶプロセス自体が楽しく、大きな充実感がある','知識やスキルを常にアップデートし続けることに、強い満足感を覚える','わからないことに出会うと、すぐに調べたり学んだりしたくなる','一つのことを学ぶと、関連する別のことも学びたくなる連鎖が起きる','「知らないこと」に出会うと不快より好奇心を感じ、学ぶ意欲が湧く'],
+  ['物事を理解するために、その歴史や背景を知ることが重要だと思う','過去の経緯や前例を踏まえてこそ、今の正確な判断ができると感じる','現在の出来事は、歴史や背景を知ることでより深く理解できると思っている','「これまでどうやってきたか」を知らずに変えることには、強い抵抗を感じる','歴史や過去の事例を参照することで、今の判断の精度が上がると感じている'],
+  ['毎日何かを成し遂げないと、充実感が得られない','困難があっても最後までやり遂げる、強い意志を持っている','目標達成のためなら、疲れていてもやり続けることができる','やることリストを全部終わらせた日に、最も充実感を覚える','どんな小さなタスクでも、締め切りより早く終わらせることにこだわる'],
+  ['複数のタスクや人を、最も効率よく配置・調整することが得意だ','状況が複雑でも、最適な組み合わせを見つけて整理することが好きだ','限られたリソースを最大限に活かす段取りを組むことに喜びを感じる','変化する状況の中でも、最適な段取りを素早く組み直すことができる','どんな複雑な状況でも、全体を整理して「誰が何をするか」を自然と決められる'],
+  ['自分の核となる価値観は、どんな状況でもぶれない','仕事や行動において、自分の価値観に沿っているかどうかを常に大切にしている','利益よりも、自分が正しいと信じることを優先することが多い','自分の価値観に反することを頼まれると、たとえ上司でも断ることがある','何のためにこれをやるのか、という「意義」がないとモチベーションが上がらない'],
+  ['誰に対しても同じルールを適用することが、公平さの基本だと思う','特別扱いや例外を嫌い、一貫したルールに基づいて行動することを好む','みんなに平等な機会が与えられるべきという感覚が、強くある','「あの人だけ特別扱い」という状況を見ると、強い違和感を覚える','ルールを全員に一貫して適用することで、職場の信頼感が生まれると思っている'],
+  ['重要な決定をする前に、リスクを徹底的に洗い出してから行動する','行動する前に起こりうる問題点を丁寧に検討することを大切にしている','慎重に考えてから動くことで、大きな失敗を避けられると感じている','自分が確認・検討していない情報を、そのまま人に伝えることに抵抗がある','物事を急ぐより、しっかり準備してから動く方が最終的に速いと信じている'],
+  ['毎日のルーティンを守ることで、安定したパフォーマンスを発揮できる','物事を体系的に整理し、計画通りに進めることに快感を覚える','スケジュールや手順が明確であると、最大限の力を発揮できる','決まった手順やフォーマットで進めることが、品質を保つ最善の方法だと思う','乱雑な環境や曖昧な指示の中では、自分本来の力が発揮できないと感じる'],
+  ['一度目標を定めたら、それに向けてブレずに集中し続けられる','優先事項を明確にして、それ以外のことには時間を割かないようにしている','ゴールが明確なほど、それに向けて全力を注ぐことができる','一つのことに集中している最中に中断されると、著しく効率が落ちる','何のために今これをやっているのかが不明確だと、モチベーションが大きく下がる'],
+  ['一度引き受けたことは、何があっても最後まで責任を持ってやり遂げる','約束を守ることが誠実さの証であり、それを破ることは受け入れられない','ミスをしたときは言い訳せず正直に認め、改善に全力を尽くす','自分の名前がついた仕事は、たとえ細部でも妥協できない','「忙しいから」は言い訳にならないと思っており、引き受けたことは必ず全うする'],
+  ['問題や障害が生じたとき、原因を突き止めて解決することにやりがいを感じる','うまくいっていないことを修正・改善することが得意で、それを楽しめる','困った状況を立て直すことに、独特の充実感を覚える','問題が起きたとき、誰のせいかより「どう直すか」を先に考える','壊れているもの・機能していないものを見ると、直さずにはいられない衝動がある'],
+  ['考えすぎずにまず行動することで、最善の結果が生まれると思っている','議論や計画が長引くと「とにかくやってみよう」と言いたくなる','行動を起こすことで初めて物事が動き始めると感じ、それが好きだ','「準備が整うまで待とう」という姿勢より「やりながら修正する」方が自分に合っている','アイデアが出たらすぐ試したくなり、スモールスタートで動くことが好きだ'],
+  ['集団の方向性が定まらないとき、自然とリーダーシップを発揮したくなる','自分の意見を明確に伝え、必要なら対立もいとわない','困難な状況でも、落ち着いて周囲を引っ張ることができる','自分が正しいと思ったことは、反対意見があっても主張し続けられる','リーダーがいない状況で自分が仕切ることに、違和感よりやりがいを感じる'],
+  ['複雑なことをわかりやすいストーリーで伝えることが得意だ','話すこと・書くことで、人の関心や感情を動かすことができる','プレゼンや説明の場で、聴衆を自然と引き込む話し方ができる','説明が長くなりそうなときも、相手を飽きさせない工夫を自然と考えている','言葉を選んで組み立てることで、相手の行動を動かせると感じることがある'],
+  ['他者と比較して自分が上位にいるかどうかを、常に意識している','競争の場では、負けることへの強い悔しさがモチベーションになる','ランキングや順位など、明確な基準での比較が自分を奮い立たせる','同じ仕事でも「誰かより速く・上手くやろう」と意識すると、より力が出る','過去の自分や他者の記録を超えることに、強い達成感を覚える'],
+  ['平均的なものを改善するより、すでに優れているものをさらに高めることに興味がある','自分や他者の強みを見つけ、それを最大限に伸ばすことに喜びを感じる','「まあまあ良い」では満足できず、卓越した成果を目指し続ける','「80点で十分」という考え方にどうしても馴染めない部分がある','自分や周囲の「得意なこと」を見つけたとき、それを徹底的に磨きたくなる'],
+  ['自分の直感や判断力を信頼しており、迷っても最終的には自分を信じる','周囲の意見に流されず、自分なりの視点を持ち続けることができる','自分の強みと弱みを正確に把握しており、自信を持って行動できる','自分の方向性に確信があるとき、周囲の反対を押し切ってでも進めることがある','「自分はこれが向いている」という感覚が強く、それに従って選択することが多い'],
+  ['自分の存在や貢献が周囲に認められることが、大切だと感じている','長く記憶に残るような、意味のある仕事や影響を残したいと思っている','多くの人に影響を与えられる、スケールの大きな仕事に惹かれる','自分の仕事が組織全体に対してどんな意味を持つかを、常に意識している','「この仕事は重要だ」と実感できると、普段以上の力が引き出される'],
+  ['初対面の人と話すのが好きで、すぐに打ち解けることができる','新しい人脈を広げることに喜びを感じ、積極的に声をかけられる','人見知りをほとんどせず、どんな場でも自然に会話を始められる','パーティや懇親会などで、知らない人に話しかけることを楽しめる','人と話した後は、たいていエネルギーが高まっていると感じる'],
+  ['予想外の変化が起きても、柔軟に方向転換して対応できる','計画が崩れてもパニックにならず、その場の状況に合わせて動ける','変化の多い環境の中でこそ、自分の力が最大限に発揮されると感じる','「今日の計画が全部崩れた」という状況でも、比較的冷静に次の手を考えられる','その日の状況や気分に合わせて、最も自分がパフォーマンスを出せる方法を選ぶ'],
+  ['あらゆる出来事や人は、何らかの形でつながっていると感じることが多い','自分の行動が大きな流れや使命の一部であるという感覚を大切にしている','偶然の出会いや出来事にも、深い意味があると感じることがある','人と人の出会いや出来事には、何らかの意図や意味があると信じている','バラバラに見える出来事が、後からつながって見えることが多い'],
+  ['人の成長や進歩を見ることに、大きな喜びとやりがいを感じる','他者の可能性を信じ、その人が成長できるようにサポートすることが好きだ','まだ開花していない才能を見つけ、引き出すことに充実感を覚える','人がうまくいったとき「その成長に自分が貢献できた」と感じることが最大の喜び','「この人はまだこんなもんじゃない」と、他者の伸びしろを直感的に感じることが多い'],
+  ['言葉にされていない相手の感情を、自然と感じ取ることが多い','悩んでいる人と接すると、自分のことのように心が動かされる','人の感情の変化を素早く察知し、場の雰囲気を敏感に読み取れる','人が傷ついているとき、その人の痛みを自分のこととして感じてしまうことがある','「この人は今どんな気持ちだろう」という問いが、自然と頭に浮かんでくる'],
+  ['対立よりも合意点を見つけ、みんなが納得できる解決を目指すことが多い','争いや摩擦を避け、全員が一致できる方向性を探ることが好きだ','意見の違う人の間を取り持ち、共通点を見つける仲介役になることが多い','対立が生じると、まず「双方に共通する点はないか」を探し始める','「自分が正しい」より「みんなが前に進める」ことの方が重要だと思っている'],
+  ['輪の外にいる人や疎外感を持つ人に気づき、積極的に声をかけることが多い','誰もが仲間に入れるよう、グループの雰囲気を常に意識して作ることが大切だと思う','多様な人が受け入れられ、誰も取り残されない環境づくりに使命感を感じる','会議やグループで発言できていない人がいると、その人に話を振りたくなる','「あの人は違うから」という排除の論理に、強い違和感を覚える'],
+  ['一人ひとりの違いや個性を観察し、その人らしさを見つけることが好きだ','同じ状況でも、人によって最適なアプローチが違うと自然に感じる','相手の個性・強み・弱みを見極め、その人に合わせた接し方ができる','同じ指示でも、人によって響き方が違うことを自然に意識して伝え方を変える','この人には何が一番合っているかを、短い会話の中でも直感的に感じ取れる'],
+  ['どんな状況でも、明るい面や可能性を見つけることができる','自分のポジティブなエネルギーが、周囲の雰囲気を明るくすることが多い','困難な状況でも「なんとかなる」という感覚を自然と持てる','ネガティブな話題が続く場で、自然と明るい見方を提示したくなる','人に接するとき、まずその人の良い面を見ようとする習慣がある'],
+  ['浅く広い関係より、深く信頼し合える少数の関係を大切にしている','相手の内面を深く知ることで、初めて本当のつながりができると感じる','親しい人との深い会話や時間に、最も充実感を覚える','相手のことを深く知れば知るほど、その人との関係がより価値あるものになると感じる','一度心が通じ合った人とは、長年経っても変わらない絆を感じることができる'],
+];
+
+// 85 pairs: [themeIdA, stmtIndexA, themeIdB, stmtIndexB]
+// Round-robin design: each of 34 themes appears exactly 5 times
+const PAIRS = [
+  // Round 1 (stmt index 0)
+  [0,0,33,0],[1,0,32,0],[2,0,31,0],[3,0,30,0],[4,0,29,0],[5,0,28,0],[6,0,27,0],[7,0,26,0],[8,0,25,0],
+  [9,0,24,0],[10,0,23,0],[11,0,22,0],[12,0,21,0],[13,0,20,0],[14,0,19,0],[15,0,18,0],[16,0,17,0],
+  // Round 2 (stmt index 1)
+  [0,1,32,1],[33,1,31,1],[1,1,30,1],[2,1,29,1],[3,1,28,1],[4,1,27,1],[5,1,26,1],[6,1,25,1],[7,1,24,1],
+  [8,1,23,1],[9,1,22,1],[10,1,21,1],[11,1,20,1],[12,1,19,1],[13,1,18,1],[14,1,17,1],[15,1,16,1],
+  // Round 3 (stmt index 2)
+  [0,2,31,2],[32,2,30,2],[33,2,29,2],[1,2,28,2],[2,2,27,2],[3,2,26,2],[4,2,25,2],[5,2,24,2],[6,2,23,2],
+  [7,2,22,2],[8,2,21,2],[9,2,20,2],[10,2,19,2],[11,2,18,2],[12,2,17,2],[13,2,16,2],[14,2,15,2],
+  // Round 4 (stmt index 3)
+  [0,3,30,3],[31,3,29,3],[32,3,28,3],[33,3,27,3],[1,3,26,3],[2,3,25,3],[3,3,24,3],[4,3,23,3],[5,3,22,3],
+  [6,3,21,3],[7,3,20,3],[8,3,19,3],[9,3,18,3],[10,3,17,3],[11,3,16,3],[12,3,15,3],[13,3,14,3],
+  // Round 5 (stmt index 4)
+  [0,4,29,4],[30,4,28,4],[31,4,27,4],[32,4,26,4],[33,4,25,4],[1,4,24,4],[2,4,23,4],[3,4,22,4],[4,4,21,4],
+  [5,4,20,4],[6,4,19,4],[7,4,18,4],[8,4,17,4],[9,4,16,4],[10,4,15,4],[11,4,14,4],[12,4,13,4],
+];
+
+// ===================== STATE =====================
+let pairs = [];
+let cur = 0;
+let answers = {}; // index -> 'A' or 'B'
+let timerInterval = null;
+let timerSec = 20;
+let radarChart = null;
+
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; }
+
+function startQuiz(){
+  pairs = shuffle(PAIRS);
+  cur = 0; answers = {};
+  showScreen('sc-quiz');
+  renderQ();
+}
+
+function renderQ(){
+  const p = pairs[cur];
+  const tA = THEMES[p[0]], tB = THEMES[p[2]];
+
+  document.getElementById('prog-num').textContent = (cur+1)+' / '+pairs.length;
+  document.getElementById('prog-fill').style.width = Math.max((cur/pairs.length)*100,2)+'%';
+
+  document.getElementById('text-a').textContent = STMTS[p[0]][p[1]];
+  document.getElementById('text-b').textContent = STMTS[p[2]][p[3]];
+
+  // Optionally show theme hint (uncomment to hide theme names for more authentic feel)
+  // document.getElementById('theme-a').textContent = tA.icon+' '+tA.name;
+  // document.getElementById('theme-b').textContent = tB.icon+' '+tB.name;
+  document.getElementById('theme-a').textContent = '';
+  document.getElementById('theme-b').textContent = '';
+
+  const saved = answers[cur];
+  document.getElementById('btn-a').classList.toggle('selected', saved==='A');
+  document.getElementById('btn-b').classList.toggle('selected', saved==='B');
+
+  const last = cur === pairs.length-1;
+  const btnNext = document.getElementById('btn-next');
+  btnNext.disabled = !saved;
+  btnNext.textContent = last ? '結果を見る 🎉' : '次へ →';
+  btnNext.className = 'btn-nav '+(last?'btn-finish-nav':'btn-next-nav');
+  btnNext.disabled = !saved;
+
+  document.getElementById('btn-prev').style.visibility = cur===0?'hidden':'visible';
+
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timerSec = 20;
+  updateTimerUI(20);
+  const ring = document.getElementById('timer-ring');
+  ring.classList.remove('timer-urgent');
+  timerInterval = setInterval(()=>{
+    timerSec--;
+    updateTimerUI(timerSec);
+    if(timerSec<=7) ring.classList.add('timer-urgent');
+    if(timerSec<=0){ clearInterval(timerInterval); }
+  },1000);
+}
+
+function updateTimerUI(sec){
+  const n = Math.max(sec,0);
+  document.getElementById('timer-num').textContent = n;
+  const circumference = 2*Math.PI*20;
+  const pct = n/20;
+  document.getElementById('ring-fill').style.strokeDashoffset = circumference*(1-pct);
+}
+
+function select(choice){
+  answers[cur]=choice;
+  document.getElementById('btn-a').classList.toggle('selected',choice==='A');
+  document.getElementById('btn-b').classList.toggle('selected',choice==='B');
+  const last=cur===pairs.length-1;
+  const btnNext=document.getElementById('btn-next');
+  btnNext.disabled=false;
+  btnNext.textContent=last?'結果を見る 🎉':'次へ →';
+  btnNext.className='btn-nav '+(last?'btn-finish-nav':'btn-next-nav');
+}
+
+function nextQ(){
+  if(!answers[cur]) return;
+  if(cur<pairs.length-1){ cur++; renderQ(); }
+  else{ clearInterval(timerInterval); showResults(); }
+}
+function prevQ(){
+  if(cur>0){ cur--; renderQ(); }
+}
+
+// ===================== RESULTS =====================
+function showResults(){
+  showScreen('sc-results');
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  // Tally scores
+  const scores = new Array(34).fill(0);
+  pairs.forEach((p,i)=>{
+    if(answers[i]==='A') scores[p[0]]++;
+    else if(answers[i]==='B') scores[p[2]]++;
+  });
+  // Normalize to 0-100 (max 3 per theme)
+  const norm = scores.map(s=>Math.round((s/5)*100));
+
+  // Domain scores
+  const domScores = {};
+  DOMAINS.forEach(d=>{domScores[d.id]=0; domScores[d.id+'_cnt']=0;});
+  THEMES.forEach((t,i)=>{ domScores[t.dom]+=norm[i]; domScores[t.dom+'_cnt']++; });
+  const domAvg = {};
+  DOMAINS.forEach(d=>{ domAvg[d.id]=Math.round(domScores[d.id]/domScores[d.id+'_cnt']); });
+
+  // Domain cards
+  const domContainer = document.getElementById('domain-cards');
+  domContainer.innerHTML = '';
+  DOMAINS.forEach(d=>{
+    const avg = domAvg[d.id];
+    const themeNames = THEMES.filter(t=>t.dom===d.id).map(t=>t.icon+t.name).join(' ');
+    domContainer.innerHTML += `<div class="dom-card dom-${d.id.toLowerCase()}">
+      <h4>${d.icon} ${d.name}</h4>
+      <div class="dom-score">${avg}<span style="font-size:1rem;font-weight:400">/100</span></div>
+      <div class="dom-bar-bg"><div class="dom-bar-fill" style="width:${avg}%"></div></div>
+      <div class="dom-themes">${themeNames}</div>
+    </div>`;
+  });
+
+  // Radar chart — top 17 for readability
+  const sorted = [...THEMES].sort((a,b)=>norm[b.id]-norm[a.id]);
+  const top17 = sorted.slice(0,17);
+  if(radarChart) radarChart.destroy();
+  const ctx = document.getElementById('radar-chart').getContext('2d');
+  radarChart = new Chart(ctx, {
+    type:'radar',
+    data:{
+      labels: top17.map(t=>t.icon+' '+t.name),
+      datasets:[{
+        label:'スコア',
+        data: top17.map(t=>norm[t.id]),
+        backgroundColor:'rgba(91,94,166,0.15)',
+        borderColor:'#5B5EA6',borderWidth:2.5,
+        pointBackgroundColor:'#5B5EA6',pointRadius:3.5,
+      }]
+    },
+    options:{
+      responsive:true,
+      scales:{r:{min:0,max:100,ticks:{stepSize:25,display:false},
+        pointLabels:{font:{size:10,weight:'700'},color:'#1E1E2E'},
+        grid:{color:'rgba(0,0,0,0.06)'},angleLines:{color:'rgba(0,0,0,0.06)'}}},
+      plugins:{legend:{display:false}}
+    }
+  });
+
+  // Top 5
+  const rankColors=['#F4A261','#8B8FC7','#52B788','#5B5EA6','#E76F51'];
+  const rankLabels=['1st','2nd','3rd','4th','5th'];
+  const top5Container=document.getElementById('top5');
+  top5Container.innerHTML='';
+  sorted.slice(0,5).forEach((t,i)=>{
+    const dom=DOMAINS.find(d=>d.id===t.dom);
+    top5Container.innerHTML+=`
+    <div class="top-card" style="border-left-color:${rankColors[i]}">
+      <div class="top-card-head">
+        <div class="rank-badge">
+          <div class="rank-num" style="color:${rankColors[i]}">${i+1}</div>
+          <div class="rank-tag">${rankLabels[i]}</div>
+        </div>
+        <div class="top-info">
+          <div class="top-name-row">
+            <span class="top-icon">${t.icon}</span>
+            <span class="top-name">${t.name}</span>
+            <span class="top-domain-chip" style="background:${dom.color}22;color:${dom.color}">${dom.icon} ${dom.name}</span>
+          </div>
+          <div class="top-score-bar-bg">
+            <div class="top-score-bar-fill" style="width:${norm[t.id]}%;background:linear-gradient(90deg,${t.color}88,${t.color})"></div>
+          </div>
+          <p class="top-desc">${t.desc}</p>
+          <div class="top-detail-grid">
+            <div class="top-detail-box"><h5>✅ 活かし方</h5><p>${t.apply}</p></div>
+            <div class="top-detail-box"><h5>⚠️ 注意点</h5><p>${t.watch}</p></div>
+          </div>
+          <div class="kw-row">${t.kw.map(k=>`<span class="kw">${k}</span>`).join('')}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  // All 34 scores by domain
+  const allContainer=document.getElementById('all-scores');
+  allContainer.innerHTML='';
+  DOMAINS.forEach(d=>{
+    allContainer.innerHTML+=`<div class="domain-label">${d.icon} ${d.name}</div>`;
+    const domThemes=sorted.filter(t=>t.dom===d.id);
+    domThemes.forEach(t=>{
+      const v=norm[t.id];
+      allContainer.innerHTML+=`<div class="score-row">
+        <span class="score-icon">${t.icon}</span>
+        <span class="score-name">${t.name}</span>
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:${v}%;background:${t.color}"></div></div>
+        <span class="score-val">${v}</span>
+      </div>`;
+    });
+  });
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function restart(){
+  clearInterval(timerInterval);
+  showScreen('sc-intro');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ===================== EXPORT =====================
+function showToast(msg){
+  const t=document.getElementById('exp-toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+function setExportBusy(busy){
+  ['btn-copy-img','btn-dl-img'].forEach(id=>{
+    document.getElementById(id).disabled=busy;
+  });
+}
+
+// html2canvasがロード済みか確認
+function checkLib(name, obj){
+  if(typeof obj === 'undefined') throw new Error(name+'が読み込まれていません。ページを再読み込みしてください。');
+}
+
+async function captureResults(scale){
+  checkLib('html2canvas', html2canvas);
+  const el = document.getElementById('sc-results');
+
+  // ① アニメーション・トランジションを一時停止するCSSを注入
+  //    fadeUpアニメーション途中だとトップ5カードが透明になるため必須
+  const styleId = 'capture-freeze-style';
+  let freezeStyle = document.getElementById(styleId);
+  if(!freezeStyle){
+    freezeStyle = document.createElement('style');
+    freezeStyle.id = styleId;
+  }
+  freezeStyle.textContent =
+    '#sc-results, #sc-results * {' +
+    '  animation: none !important;' +
+    '  animation-delay: 0s !important;' +
+    '  transition: none !important;' +
+    '  opacity: 1 !important;' +
+    '  transform: none !important;' +
+    '}';
+  document.head.appendChild(freezeStyle);
+
+  // ② スクロールを先頭へ（html2canvasの座標ズレ対策）
+  const prevScroll = window.scrollY;
+  window.scrollTo(0, 0);
+  await new Promise(r => setTimeout(r, 250)); // レイアウト確定待ち
+
+  let canvas;
+  try {
+    canvas = await html2canvas(el, {
+      scale: scale || 1.5,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#F7F7FC',
+      logging: false,
+      width: el.offsetWidth,
+      height: el.scrollHeight,
+      windowWidth: document.documentElement.clientWidth,
+      windowHeight: el.scrollHeight,
+    });
+  } finally {
+    // ③ アニメーション復元 & スクロール復元
+    document.head.removeChild(freezeStyle);
+    window.scrollTo(0, prevScroll);
+  }
+  return canvas;
+}
+
+function downloadFromCanvas(canvas, filename){
+  const a = document.createElement('a');
+  a.download = filename || 'strengths-result.png';
+  a.href = canvas.toDataURL('image/png');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+async function exportImage(){
+  setExportBusy(true);
+  try {
+    showToast('⏳ 画像を生成中...');
+    const canvas = await captureResults();
+
+    // Clipboard APIはHTTPS or localhost必須。file://では動かないのでDLにフォールバック
+    const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
+    let copied = false;
+
+    if(isSecure && navigator.clipboard && window.ClipboardItem){
+      try {
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+        showToast('✅ クリップボードにコピーしました！');
+        copied = true;
+      } catch(e) {
+        console.warn('Clipboard write failed:', e);
+      }
+    }
+
+    if(!copied){
+      downloadFromCanvas(canvas, 'strengths-result.png');
+      showToast(isSecure
+        ? '⬇ 画像をダウンロードしました（クリップボードは権限が必要です）'
+        : '⬇ 画像をダウンロードしました（ローカルファイルではコピー不可）');
+    }
+  } catch(e) {
+    console.error(e);
+    showToast('❌ ' + (e.message || '画像生成に失敗しました'));
+  }
+  setExportBusy(false);
+}
+
+async function downloadImage(){
+  setExportBusy(true);
+  try {
+    showToast('⏳ 画像を生成中...');
+    const canvas = await captureResults();
+    downloadFromCanvas(canvas, 'strengths-result.png');
+    showToast('✅ 画像をダウンロードしました！');
+  } catch(e) {
+    console.error(e);
+    showToast('❌ ' + (e.message || '画像生成に失敗しました'));
+  }
+  setExportBusy(false);
+}
+
+</script>
+</body>
+</html>
